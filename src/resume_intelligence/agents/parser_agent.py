@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 _DATA_DIR = Path(__file__).parent.parent / "data"
 _ALIASES_PATH = _DATA_DIR / "skill_aliases.json"
 
-# ── Module-level singletons (loaded once) ─────────────────────────────────────
+# ── Alias map — loaded eagerly (pure JSON, no compilation) ────────────────────
 
 def _load_aliases() -> dict[str, str]:
     """Load skill alias dictionary from JSON, ignoring comment keys."""
@@ -48,23 +48,77 @@ def _load_aliases() -> dict[str, str]:
         return {}
 
 
-def _load_spacy_model() -> Language:
-    """Load the spaCy model specified by SPACY_MODEL env var (default: en_core_web_sm)."""
-    model_name = os.getenv("SPACY_MODEL", "en_core_web_sm")
-    try:
-        return spacy.load(model_name)
-    except OSError:
-        logger.warning(
-            "spaCy model '%s' not found. Falling back to blank English model. "
-            "Run: python -m spacy download %s",
-            model_name, model_name,
-        )
-        return spacy.blank("en")
-
-
-# Loaded once at import time — shared across all calls
 _ALIAS_MAP: dict[str, str] = _load_aliases()
-_NLP: Language = _load_spacy_model()
+
+# ── spaCy model — lazy-loaded and cached ──────────────────────────────────────
+#
+# WHY lazy loading?
+# -----------------
+# On Streamlit Cloud the spaCy model wheel is installed at build time via
+# requirements.txt. However, importing spacy.load() at module level causes
+# the model to be resolved during the first import, which can race with the
+# Streamlit Cloud build process or fail if the model package hasn't been
+# registered yet.
+#
+# Lazy loading defers the spacy.load() call to the first actual parse request,
+# by which point all packages are fully installed. A module-level sentinel
+# (_NLP = None) and a getter function (_get_nlp()) ensure the model is loaded
+# exactly once and reused for all subsequent calls.
+#
+# Auto-download fallback:
+# If the model is still not found (e.g. local dev without running
+# `python -m spacy download en_core_web_sm`), we attempt a subprocess download
+# and retry once. If that also fails, we fall back to spacy.blank("en") so
+# the app stays functional (NER is degraded but skill/education/experience
+# extraction still works via regex and keyword matching).
+
+_NLP: Optional[Language] = None  # populated on first call to _get_nlp()
+
+
+def _get_nlp() -> Language:
+    """
+    Return the cached spaCy model, loading it on first call.
+
+    Load order:
+    1. Try spacy.load(model_name)  — succeeds when wheel is installed
+    2. Try subprocess download + retry  — fallback for local dev
+    3. spacy.blank("en")  — last resort; NER disabled but app stays alive
+    """
+    global _NLP
+    if _NLP is not None:
+        return _NLP
+
+    model_name = os.getenv("SPACY_MODEL", "en_core_web_sm")
+
+    # Attempt 1: model already installed (normal path on Streamlit Cloud)
+    try:
+        _NLP = spacy.load(model_name)
+        logger.info("spaCy model '%s' loaded successfully.", model_name)
+        return _NLP
+    except OSError:
+        logger.warning("spaCy model '%s' not found — attempting download.", model_name)
+
+    # Attempt 2: download and retry (local dev convenience)
+    try:
+        import subprocess
+        subprocess.run(
+            [os.sys.executable, "-m", "spacy", "download", model_name],
+            check=True,
+            capture_output=True,
+        )
+        _NLP = spacy.load(model_name)
+        logger.info("spaCy model '%s' downloaded and loaded.", model_name)
+        return _NLP
+    except Exception as exc:
+        logger.warning(
+            "Could not download spaCy model '%s': %s. "
+            "Falling back to blank English model — NER will be limited.",
+            model_name, exc,
+        )
+
+    # Attempt 3: blank model (NER disabled; regex extraction still works)
+    _NLP = spacy.blank("en")
+    return _NLP
 
 # ── Skill vocabulary ──────────────────────────────────────────────────────────
 # All canonical skill names from the alias map, plus common skills not in aliases.
@@ -257,7 +311,8 @@ def _extract_ner_entities(text: str) -> tuple[Optional[str], List[str]]:
 
     Returns (name, organisations).
     """
-    doc = _NLP(text[:10_000])  # cap at 10k chars for speed
+    nlp = _get_nlp()  # lazy-load on first call
+    doc = nlp(text[:10_000])  # cap at 10k chars for speed
     name: Optional[str] = None
     orgs: List[str] = []
     seen_orgs: set[str] = set()

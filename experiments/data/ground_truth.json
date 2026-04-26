@@ -1,0 +1,10 @@
+{
+  "resume_1": {
+    "text": "Python developer with experience in SQL and Docker",
+    "skills": ["python", "sql", "docker"]
+  },
+  "resume_2": {
+    "text": "Machine learning engineer with AWS and Kubernetes",
+    "skills": ["machine learning", "aws", "kubernetes"]
+  }
+}

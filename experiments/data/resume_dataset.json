@@ -1,0 +1,177 @@
+[
+  {
+    "id": "sample_01",
+    "resume_text": "Experienced data scientist with 5 years of hands-on work in Python, SQL, and machine learning. Built predictive models using scikit-learn and TensorFlow. Deployed pipelines on AWS using Docker and Kubernetes. Strong background in data analysis, feature engineering, and A/B testing.",
+    "job_text": "We are looking for a data scientist proficient in Python and SQL. The role requires experience with machine learning frameworks such as scikit-learn or TensorFlow. Familiarity with cloud platforms like AWS and containerisation tools like Docker is a plus.",
+    "skills_true": ["python", "sql", "machine learning", "scikit-learn", "tensorflow", "aws", "docker", "kubernetes"],
+    "label": 1
+  },
+  {
+    "id": "sample_02",
+    "resume_text": "ML engineer with deep expertise in PyTorch and deep learning. Developed NLP pipelines using Hugging Face transformers and BERT. Experienced with MLflow for experiment tracking and MLOps practices. Comfortable with Linux, Git, and CI/CD workflows.",
+    "job_text": "Seeking a machine learning engineer to build and maintain NLP systems. Must have experience with deep learning frameworks (PyTorch or TensorFlow), transformer models, and MLOps tooling. Linux and Git proficiency required.",
+    "skills_true": ["pytorch", "deep learning", "natural language processing", "hugging face", "bert", "mlflow", "mlops", "linux", "git"],
+    "label": 1
+  },
+  {
+    "id": "sample_03",
+    "resume_text": "Full-stack software engineer with 4 years of experience building web applications using React, Node.js, and TypeScript. Proficient in REST API design with FastAPI and Django. Uses Docker for containerisation and PostgreSQL for data storage. Familiar with Agile and Scrum methodologies.",
+    "job_text": "Full-stack developer needed with strong skills in React and Node.js. TypeScript experience is required. Backend experience with Django or FastAPI is preferred. Must be comfortable with Docker and relational databases such as PostgreSQL.",
+    "skills_true": ["react", "node.js", "typescript", "fastapi", "django", "docker", "postgresql"],
+    "label": 1
+  },
+  {
+    "id": "sample_04",
+    "resume_text": "Data engineer with expertise in Apache Spark, Kafka, and Airflow for building large-scale data pipelines. Proficient in Python and SQL. Experienced with cloud data warehouses on GCP and BigQuery. Familiar with Terraform for infrastructure as code.",
+    "job_text": "Data engineer role requiring experience with distributed data processing using Spark or Kafka. Python and SQL are mandatory. GCP experience is a strong plus. Candidates should understand pipeline orchestration tools like Airflow.",
+    "skills_true": ["apache spark", "apache kafka", "apache airflow", "python", "sql", "google cloud platform", "terraform"],
+    "label": 1
+  },
+  {
+    "id": "sample_05",
+    "resume_text": "DevOps engineer with 6 years of experience managing cloud infrastructure on AWS and Azure. Expert in Kubernetes, Docker, Terraform, and Ansible. Implemented CI/CD pipelines using Jenkins and GitHub Actions. Strong Linux administration and shell scripting skills.",
+    "job_text": "Looking for a DevOps engineer to manage our cloud infrastructure. Must have experience with AWS or Azure, Kubernetes, and Docker. Terraform knowledge is required. Experience with CI/CD tools such as Jenkins is expected.",
+    "skills_true": ["amazon web services", "microsoft azure", "kubernetes", "docker", "terraform", "ansible", "jenkins", "linux"],
+    "label": 1
+  },
+  {
+    "id": "sample_06",
+    "resume_text": "Backend software engineer specialising in Python and Java microservices. Built scalable REST APIs using Flask and Spring Boot. Experienced with PostgreSQL, Redis, and MongoDB. Proficient in Git, Docker, and Agile development practices.",
+    "job_text": "Backend engineer needed with strong Python or Java skills. Experience building REST APIs is required. Familiarity with relational and NoSQL databases (PostgreSQL, MongoDB) is expected. Docker and Git are part of our daily workflow.",
+    "skills_true": ["python", "java", "flask", "spring boot", "postgresql", "redis", "mongodb", "docker", "git"],
+    "label": 1
+  },
+  {
+    "id": "sample_07",
+    "resume_text": "Research scientist with a PhD in computer vision. Published work on object detection using PyTorch and convolutional neural networks. Experienced with large-scale image datasets, data augmentation, and model optimisation. Proficient in Python, NumPy, and OpenCV.",
+    "job_text": "Research scientist position in computer vision. Requires deep learning expertise, specifically with PyTorch. Experience with object detection or image segmentation is essential. Python and NumPy proficiency expected.",
+    "skills_true": ["computer vision", "pytorch", "deep learning", "python", "numpy"],
+    "label": 1
+  },
+  {
+    "id": "sample_08",
+    "resume_text": "Data analyst with 3 years of experience in SQL, Python, and Tableau. Built dashboards and reports for business stakeholders. Experienced with Pandas, NumPy, and statistical analysis. Familiar with A/B testing and data visualisation best practices.",
+    "job_text": "Data analyst role requiring strong SQL and Python skills. Experience with Tableau or Power BI for dashboarding is required. Candidates should be comfortable with statistical analysis and communicating insights to non-technical audiences.",
+    "skills_true": ["sql", "python", "tableau", "pandas", "numpy", "statistics", "data visualization"],
+    "label": 1
+  },
+  {
+    "id": "sample_09",
+    "resume_text": "NLP engineer with expertise in building text classification and named entity recognition systems. Proficient in Python, Hugging Face transformers, and spaCy. Experienced with BERT fine-tuning and large language models. Familiar with FastAPI for model serving.",
+    "job_text": "NLP engineer needed to develop and deploy text processing pipelines. Must have experience with transformer models and Hugging Face. Python proficiency is required. Knowledge of model serving frameworks like FastAPI is a plus.",
+    "skills_true": ["natural language processing", "python", "hugging face", "bert", "large language models", "fastapi"],
+    "label": 1
+  },
+  {
+    "id": "sample_10",
+    "resume_text": "Cloud architect with 8 years of experience designing solutions on AWS. Expert in serverless architectures, Lambda, S3, and RDS. Proficient in Terraform and CloudFormation for infrastructure as code. Strong Python and Bash scripting skills.",
+    "job_text": "Cloud architect needed with deep AWS expertise. Must have experience with serverless services, infrastructure as code using Terraform or CloudFormation, and scripting in Python or Bash.",
+    "skills_true": ["amazon web services", "terraform", "python", "bash"],
+    "label": 1
+  },
+  {
+    "id": "sample_11",
+    "resume_text": "Machine learning engineer with 4 years of experience in production ML systems. Skilled in Python, scikit-learn, and XGBoost for tabular data modelling. Experienced with MLflow for experiment tracking and model registry. Deployed models on AWS SageMaker.",
+    "job_text": "ML engineer to build and maintain production machine learning models. Python and scikit-learn are required. Experience with XGBoost or LightGBM is preferred. MLOps experience including experiment tracking with MLflow is a strong plus.",
+    "skills_true": ["python", "machine learning", "scikit-learn", "xgboost", "mlflow", "amazon web services"],
+    "label": 1
+  },
+  {
+    "id": "sample_12",
+    "resume_text": "Software engineer with strong JavaScript and TypeScript skills. Built single-page applications using React and Vue.js. Experienced with GraphQL APIs and Node.js backends. Familiar with Docker, Git, and Agile workflows.",
+    "job_text": "Frontend engineer needed with expertise in React and TypeScript. Experience with GraphQL and Node.js is a plus. Must be comfortable with Git and modern development workflows.",
+    "skills_true": ["javascript", "typescript", "react", "vue.js", "graphql", "node.js", "docker", "git"],
+    "label": 1
+  },
+  {
+    "id": "sample_13",
+    "resume_text": "Senior data scientist with expertise in Python, R, and statistical modelling. Built recommendation systems and customer churn models using scikit-learn and LightGBM. Experienced with Spark for large-scale data processing and Tableau for visualisation.",
+    "job_text": "Senior data scientist role requiring Python and strong statistical modelling skills. Experience with recommendation systems or churn prediction is preferred. Familiarity with Spark and data visualisation tools is expected.",
+    "skills_true": ["python", "r", "statistics", "scikit-learn", "lightgbm", "apache spark", "tableau"],
+    "label": 1
+  },
+  {
+    "id": "sample_14",
+    "resume_text": "Graphic designer with 5 years of experience in Adobe Photoshop, Illustrator, and InDesign. Created brand identities, marketing materials, and UI mockups. Proficient in Figma and Sketch for digital design. Strong understanding of typography and colour theory.",
+    "job_text": "We are looking for a data scientist proficient in Python and SQL. The role requires experience with machine learning frameworks such as scikit-learn or TensorFlow. Familiarity with cloud platforms like AWS and containerisation tools like Docker is a plus.",
+    "skills_true": ["photoshop", "illustrator", "figma"],
+    "label": 0
+  },
+  {
+    "id": "sample_15",
+    "resume_text": "Marketing manager with expertise in SEO, Google Analytics, and content strategy. Managed social media campaigns across Facebook, Instagram, and LinkedIn. Experienced with HubSpot CRM and email marketing automation. Strong copywriting and brand storytelling skills.",
+    "job_text": "Seeking a machine learning engineer to build and maintain NLP systems. Must have experience with deep learning frameworks (PyTorch or TensorFlow), transformer models, and MLOps tooling. Linux and Git proficiency required.",
+    "skills_true": ["seo", "google analytics", "hubspot"],
+    "label": 0
+  },
+  {
+    "id": "sample_16",
+    "resume_text": "Civil engineer with 7 years of experience in structural analysis and AutoCAD. Managed construction projects and coordinated with contractors. Proficient in MATLAB for structural simulations. Familiar with project management tools like MS Project.",
+    "job_text": "Full-stack developer needed with strong skills in React and Node.js. TypeScript experience is required. Backend experience with Django or FastAPI is preferred. Must be comfortable with Docker and relational databases such as PostgreSQL.",
+    "skills_true": ["matlab", "autocad"],
+    "label": 0
+  },
+  {
+    "id": "sample_17",
+    "resume_text": "HR specialist with experience in talent acquisition, onboarding, and employee relations. Proficient in Workday and SAP SuccessFactors for HRIS management. Strong interpersonal and communication skills. Familiar with labour law and compliance.",
+    "job_text": "Data engineer role requiring experience with distributed data processing using Spark or Kafka. Python and SQL are mandatory. GCP experience is a strong plus. Candidates should understand pipeline orchestration tools like Airflow.",
+    "skills_true": ["workday", "sap"],
+    "label": 0
+  },
+  {
+    "id": "sample_18",
+    "resume_text": "Financial analyst with expertise in Excel, financial modelling, and valuation. Experienced with Bloomberg Terminal and SQL for data extraction. CFA Level 2 candidate. Strong skills in PowerPoint and presenting to senior stakeholders.",
+    "job_text": "Looking for a DevOps engineer to manage our cloud infrastructure. Must have experience with AWS or Azure, Kubernetes, and Docker. Terraform knowledge is required. Experience with CI/CD tools such as Jenkins is expected.",
+    "skills_true": ["sql", "microsoft excel"],
+    "label": 0
+  },
+  {
+    "id": "sample_19",
+    "resume_text": "Mobile app developer specialising in iOS development using Swift and Objective-C. Published 10 apps on the App Store. Experienced with Xcode, Core Data, and RESTful API integration. Familiar with Agile and test-driven development.",
+    "job_text": "Backend engineer needed with strong Python or Java skills. Experience building REST APIs is required. Familiarity with relational and NoSQL databases (PostgreSQL, MongoDB) is expected. Docker and Git are part of our daily workflow.",
+    "skills_true": ["swift", "rest api"],
+    "label": 0
+  },
+  {
+    "id": "sample_20",
+    "resume_text": "Content writer and editor with 6 years of experience producing long-form articles, white papers, and technical documentation. Proficient in WordPress, SEO writing, and AP Style. Experienced with Grammarly and Hemingway Editor. Strong research and storytelling skills.",
+    "job_text": "Research scientist position in computer vision. Requires deep learning expertise, specifically with PyTorch. Experience with object detection or image segmentation is essential. Python and NumPy proficiency expected.",
+    "skills_true": ["wordpress", "seo"],
+    "label": 0
+  },
+  {
+    "id": "sample_21",
+    "resume_text": "Supply chain manager with expertise in logistics optimisation, ERP systems (SAP), and vendor management. Managed global procurement operations and reduced costs by 20%. Proficient in Excel and Power BI for reporting. Familiar with Six Sigma methodologies.",
+    "job_text": "Data analyst role requiring strong SQL and Python skills. Experience with Tableau or Power BI for dashboarding is required. Candidates should be comfortable with statistical analysis and communicating insights to non-technical audiences.",
+    "skills_true": ["power bi", "microsoft excel"],
+    "label": 0
+  },
+  {
+    "id": "sample_22",
+    "resume_text": "Biomedical researcher with a PhD in molecular biology. Published 12 peer-reviewed papers on gene expression and CRISPR. Proficient in R and Python for bioinformatics analysis. Experienced with laboratory techniques including PCR and Western blot.",
+    "job_text": "NLP engineer needed to develop and deploy text processing pipelines. Must have experience with transformer models and Hugging Face. Python proficiency is required. Knowledge of model serving frameworks like FastAPI is a plus.",
+    "skills_true": ["r", "python"],
+    "label": 0
+  },
+  {
+    "id": "sample_23",
+    "resume_text": "UX designer with 4 years of experience conducting user research, wireframing, and prototyping. Proficient in Figma, Sketch, and Adobe XD. Experienced with usability testing and accessibility standards. Familiar with HTML and CSS for design handoff.",
+    "job_text": "Cloud architect needed with deep AWS expertise. Must have experience with serverless services, infrastructure as code using Terraform or CloudFormation, and scripting in Python or Bash.",
+    "skills_true": ["figma", "sketch"],
+    "label": 0
+  },
+  {
+    "id": "sample_24",
+    "resume_text": "Accountant with 8 years of experience in financial reporting, tax compliance, and auditing. Proficient in QuickBooks, Xero, and SAP. Strong knowledge of GAAP and IFRS. Experienced with Excel for financial modelling and pivot tables.",
+    "job_text": "ML engineer to build and maintain production machine learning models. Python and scikit-learn are required. Experience with XGBoost or LightGBM is preferred. MLOps experience including experiment tracking with MLflow is a strong plus.",
+    "skills_true": ["microsoft excel"],
+    "label": 0
+  },
+  {
+    "id": "sample_25",
+    "resume_text": "Physical education teacher with 10 years of experience coaching basketball and athletics. Developed fitness programmes and managed sports events. Proficient in Microsoft Office for administrative tasks. Strong leadership and team-building skills.",
+    "job_text": "Frontend engineer needed with expertise in React and TypeScript. Experience with GraphQL and Node.js is a plus. Must be comfortable with Git and modern development workflows.",
+    "skills_true": [],
+    "label": 0
+  }
+]

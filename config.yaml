@@ -1,0 +1,39 @@
+# ─────────────────────────────────────────────────────────────
+# Resume Intelligence — Application Configuration
+# Override any value via environment variables or a .env file.
+# ─────────────────────────────────────────────────────────────
+
+# ── Data paths ────────────────────────────────────────────────
+data:
+  resume_dataset_path: ""        # Kaggle resume CSV; blank → synthetic fallback
+  ner_dataset_path: ""           # HuggingFace NER dataset; blank → synthetic fallback
+  jd_dataset_path: ""            # Job description dataset; blank → synthetic fallback
+  sample_resumes: "data/sample_resumes.csv"
+  sample_jobs: "data/sample_jobs.csv"
+  skill_aliases: "src/resume_intelligence/data/skill_aliases.json"
+  name_pairs: "src/resume_intelligence/data/name_pairs.json"
+
+# ── Model configuration ───────────────────────────────────────
+models:
+  spacy_model: "en_core_web_sm"          # NER model
+  sbert_model: "all-MiniLM-L6-v2"        # Sentence-Transformers model (384-dim)
+
+# ── Scoring weights (must sum to 1.0) ────────────────────────
+scoring:
+  weight_skill_coverage: 0.35
+  weight_semantic_similarity: 0.35
+  weight_skill_gap_penalty: 0.15
+  weight_experience_depth: 0.15
+
+# ── Bias audit settings ───────────────────────────────────────
+audit:
+  threshold: 50    # score >= threshold → positive prediction for Fairlearn
+
+# ── Evaluation harness ────────────────────────────────────────
+evaluation:
+  random_seed: 42
+  train_ratio: 0.70
+  val_ratio: 0.15
+  test_ratio: 0.15
+  min_ner_f1: 0.70          # minimum acceptable F1 per entity type
+  min_spearman: 0.60        # minimum acceptable Spearman correlation

@@ -1,0 +1,17 @@
+[
+  {"name": "Emily Walsh",      "group": "White American"},
+  {"name": "Connor Murphy",    "group": "White American"},
+  {"name": "Jamal Washington", "group": "African American"},
+  {"name": "DeShawn Brooks",   "group": "African American"},
+  {"name": "Aisha Johnson",    "group": "African American"},
+  {"name": "Wei Zhang",        "group": "East Asian"},
+  {"name": "Yuki Tanaka",      "group": "East Asian"},
+  {"name": "Jing Li",          "group": "East Asian"},
+  {"name": "Sofia Ramirez",    "group": "Hispanic"},
+  {"name": "Carlos Mendoza",   "group": "Hispanic"},
+  {"name": "Priya Sharma",     "group": "South Asian"},
+  {"name": "Aisha Patel",      "group": "South Asian"},
+  {"name": "Rahul Gupta",      "group": "South Asian"},
+  {"name": "John Smith",       "group": "White American"},
+  {"name": "Maria Garcia",     "group": "Hispanic"}
+]

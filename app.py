@@ -1,14 +1,13 @@
 """
-app.py — Resume Intelligence Streamlit Application
+app.py - Resume Intelligence Streamlit Application
 
 Run with:
     streamlit run app.py
 
-Sections
---------
-A. Resume Parser   — parse raw resume text → structured entities
-B. Job Matching    — score resume against job description
-C. Bias Audit      — name-swapping fairness experiment
+Sections:
+  A. Resume Parser  - parse raw resume text -> structured entities
+  B. Job Matching   - score resume against job description
+  C. Bias Audit     - name-swapping fairness experiment
 """
 
 from __future__ import annotations
@@ -18,9 +17,9 @@ import os
 import sys
 from typing import Optional
 
-# ── Robust src path injection ─────────────────────────────────────────────────
+# --- Robust src path injection ---
 # MUST be before any resume_intelligence imports.
-# os.path.abspath(__file__) works on both local dev and Streamlit Cloud
+# Uses os.path.abspath so it works on both local dev and Streamlit Cloud
 # regardless of the current working directory.
 
 _ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -32,7 +31,7 @@ if _SRC_PATH not in sys.path:
 import pandas as pd
 import streamlit as st
 
-# ── Page config (must be first Streamlit call) ────────────────────────────────
+# --- Page config (must be first Streamlit call) ---
 st.set_page_config(
     page_title="Resume Intelligence",
     page_icon="📄",
@@ -40,14 +39,15 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# ── Lazy pipeline import (avoids slow model load on every rerun) ──────────────
-@st.cache_resource(show_spinner="Loading AI models — this takes ~10 s on first run…")
+
+# --- Lazy pipeline import (avoids slow model load on every rerun) ---
+@st.cache_resource(show_spinner="Loading AI models - this takes ~10 s on first run...")
 def _load_pipeline():
     from resume_intelligence.pipeline.pipeline import run_pipeline
     return run_pipeline
 
 
-# ── Sample data ───────────────────────────────────────────────────────────────
+# --- Sample data ---
 
 _SAMPLE_RESUME = """\
 Alex Johnson
@@ -60,18 +60,18 @@ SKILLS
 Python, machine learning, NLP, pandas, scikit-learn, SQL, TensorFlow, Docker, AWS
 
 EXPERIENCE
-Data Scientist — Acme Corp (2020–2024)
+Data Scientist - Acme Corp (2020-2024)
 - Built ML pipelines for customer churn prediction using scikit-learn
 - Developed NLP models for sentiment analysis with TensorFlow
 - 4 years of experience in machine learning and data analysis
 
 EDUCATION
-M.S. Computer Science — Stanford University (2020)
-B.S. Statistics — UC Berkeley (2018)
+M.S. Computer Science - Stanford University (2020)
+B.S. Statistics - UC Berkeley (2018)
 """
 
 _SAMPLE_JD = """\
-Senior Data Scientist — TechCorp
+Senior Data Scientist - TechCorp
 
 We are looking for a Senior Data Scientist to join our AI team.
 
@@ -89,13 +89,10 @@ Responsibilities:
 """
 
 
-# ── File text extraction ──────────────────────────────────────────────────────
+# --- File text extraction ---
 
 def _extract_text_from_file(uploaded_file) -> Optional[str]:
-    """
-    Extract plain text from an uploaded file.
-    Supports .txt, .pdf (pypdf), .docx (python-docx).
-    """
+    """Extract plain text from an uploaded file (TXT, PDF, DOCX)."""
     if uploaded_file is None:
         return None
 
@@ -132,10 +129,10 @@ def _extract_text_from_file(uploaded_file) -> Optional[str]:
     return None
 
 
-# ── Sidebar ───────────────────────────────────────────────────────────────────
+# --- Sidebar ---
 
 def _render_sidebar() -> dict:
-    st.sidebar.title("⚙️ Settings")
+    st.sidebar.title("Settings")
     st.sidebar.markdown("---")
 
     st.sidebar.subheader("Data")
@@ -150,7 +147,7 @@ def _render_sidebar() -> dict:
     run_audit = st.sidebar.checkbox(
         "Run Bias Audit",
         value=True,
-        help="Name-swapping fairness experiment — adds ~5–10 s",
+        help="Name-swapping fairness experiment - adds ~5-10 s",
     )
     show_tfidf = st.sidebar.checkbox(
         "Show TF-IDF Baseline",
@@ -169,9 +166,9 @@ def _render_sidebar() -> dict:
         "**Resume Intelligence**\n\n"
         "A Multi-Agent Framework for Structured and Fair Resume Screening.\n\n"
         "**Agents:**\n"
-        "- 📋 Resume Parser (spaCy NER)\n"
-        "- 🎯 Semantic Scorer (MiniLM)\n"
-        "- ⚖️ Bias Auditor (name-swapping)"
+        "- Resume Parser (spaCy NER)\n"
+        "- Semantic Scorer (MiniLM)\n"
+        "- Bias Auditor (name-swapping)"
     )
 
     return {
@@ -182,7 +179,7 @@ def _render_sidebar() -> dict:
     }
 
 
-# ── Input widgets ─────────────────────────────────────────────────────────────
+# --- Input widgets ---
 
 def _resolve_text(
     file_uploader_key: str,
@@ -192,11 +189,7 @@ def _resolve_text(
 ) -> str:
     """
     Inject the correct text into session_state BEFORE the text area renders.
-
     Priority: uploaded file > sample data toggle > user-typed text.
-    Uses session_state injection so the text area reflects file content
-    on the same rerun the file was uploaded (st.text_area value= is ignored
-    after first render).
     """
     uploaded = st.session_state.get(file_uploader_key)
 
@@ -215,11 +208,11 @@ def _resolve_text(
     return st.session_state.get(text_area_key, "")
 
 
-def _render_inputs(use_sample: bool) -> tuple[str, str]:
+def _render_inputs(use_sample: bool) -> tuple:
     col1, col2 = st.columns(2)
 
     with col1:
-        st.subheader("📄 Resume")
+        st.subheader("Resume")
         st.file_uploader(
             "Upload resume (PDF, DOCX, or TXT)",
             type=["pdf", "docx", "txt"],
@@ -228,9 +221,9 @@ def _render_inputs(use_sample: bool) -> tuple[str, str]:
         _resolve_text("resume_file", "resume_text", use_sample, _SAMPLE_RESUME)
 
         if st.session_state.get("resume_file") is not None:
-            st.caption(f"📎 Using uploaded file: **{st.session_state['resume_file'].name}**")
-        elif use_sample and st.session_state.get("resume_text", "").strip() == _SAMPLE_RESUME.strip():
-            st.caption("📋 Using sample data")
+            st.caption(f"Using uploaded file: {st.session_state['resume_file'].name}")
+        elif use_sample:
+            st.caption("Using sample data")
 
         resume_text = st.text_area(
             "Or paste resume text directly",
@@ -240,7 +233,7 @@ def _render_inputs(use_sample: bool) -> tuple[str, str]:
         )
 
     with col2:
-        st.subheader("💼 Job Description")
+        st.subheader("Job Description")
         st.file_uploader(
             "Upload job description (PDF, DOCX, or TXT)",
             type=["pdf", "docx", "txt"],
@@ -249,9 +242,9 @@ def _render_inputs(use_sample: bool) -> tuple[str, str]:
         _resolve_text("jd_file", "jd_text", use_sample, _SAMPLE_JD)
 
         if st.session_state.get("jd_file") is not None:
-            st.caption(f"📎 Using uploaded file: **{st.session_state['jd_file'].name}**")
-        elif use_sample and st.session_state.get("jd_text", "").strip() == _SAMPLE_JD.strip():
-            st.caption("📋 Using sample data")
+            st.caption(f"Using uploaded file: {st.session_state['jd_file'].name}")
+        elif use_sample:
+            st.caption("Using sample data")
 
         jd_text = st.text_area(
             "Or paste job description directly",
@@ -263,13 +256,13 @@ def _render_inputs(use_sample: bool) -> tuple[str, str]:
     return resume_text, jd_text
 
 
-# ── Pipeline status banner ────────────────────────────────────────────────────
+# --- Pipeline status ---
 
 def _render_pipeline_status(agents_completed: list) -> None:
     agents = [
-        ("parsing",  "📋 Resume Parser"),
-        ("scoring",  "🎯 Job Matching"),
-        ("auditing", "⚖️ Bias Audit"),
+        ("parsing",  "Resume Parser"),
+        ("scoring",  "Job Matching"),
+        ("auditing", "Bias Audit"),
     ]
     cols = st.columns(len(agents))
     for col, (key, label) in zip(cols, agents):
@@ -279,16 +272,16 @@ def _render_pipeline_status(agents_completed: list) -> None:
             col.error(f"❌ {label}")
 
 
-# ── Section A: Resume Parser ──────────────────────────────────────────────────
+# --- Section A: Resume Parser ---
 
 def _render_parser_section(result, show_raw: bool) -> None:
     st.markdown("---")
-    st.subheader("📋 Resume Parser")
+    st.subheader("Resume Parser")
 
     pr = result.parsed_resume
 
     if pr.parse_error:
-        st.warning(f"⚠️ Parser warning: {pr.parse_error}")
+        st.warning(f"Parser warning: {pr.parse_error}")
 
     m1, m2, m3, m4 = st.columns(4)
     m1.metric("Skills", len(pr.normalized_skills))
@@ -297,37 +290,37 @@ def _render_parser_section(result, show_raw: bool) -> None:
     m4.metric("Organizations", len(pr.organizations))
 
     if pr.name:
-        st.markdown(f"**👤 Candidate detected:** {pr.name}")
+        st.markdown(f"**Candidate detected:** {pr.name}")
 
     c1, c2 = st.columns(2)
 
     with c1:
         if pr.normalized_skills:
-            with st.expander(f"✅ Extracted Skills ({len(pr.normalized_skills)})", expanded=True):
+            with st.expander(f"Extracted Skills ({len(pr.normalized_skills)})", expanded=True):
                 st.markdown(" ".join(f"`{s}`" for s in sorted(pr.normalized_skills)))
         if pr.job_titles:
-            with st.expander(f"💼 Job Titles ({len(pr.job_titles)})"):
+            with st.expander(f"Job Titles ({len(pr.job_titles)})"):
                 for t in pr.job_titles:
                     st.markdown(f"- {t.title()}")
 
     with c2:
         if pr.education:
-            with st.expander(f"🎓 Education ({len(pr.education)})", expanded=True):
+            with st.expander(f"Education ({len(pr.education)})", expanded=True):
                 for e in pr.education:
                     st.markdown(f"- {e}")
         if pr.organizations:
-            with st.expander(f"🏢 Organizations ({len(pr.organizations)})"):
+            with st.expander(f"Organizations ({len(pr.organizations)})"):
                 for o in pr.organizations:
                     st.markdown(f"- {o}")
 
     if show_raw:
-        with st.expander("🔍 Raw JSON — ParsedResume"):
+        with st.expander("Raw JSON - ParsedResume"):
             d = pr.model_dump()
             d.pop("raw_text", None)
             st.json(d)
 
 
-# ── Section B: Job Matching ───────────────────────────────────────────────────
+# --- Section B: Job Matching ---
 
 def _score_badge(score: float) -> str:
     if score >= 75:
@@ -339,7 +332,7 @@ def _score_badge(score: float) -> str:
 
 def _render_scoring_section(result, show_tfidf: bool, show_raw: bool) -> None:
     st.markdown("---")
-    st.subheader("🎯 Job Matching")
+    st.subheader("Job Matching")
 
     sr = result.scoring_result
     jd = result.job_description
@@ -351,7 +344,7 @@ def _render_scoring_section(result, show_tfidf: bool, show_raw: bool) -> None:
     badge = _score_badge(sr.final_score)
     st.markdown(
         f"### {badge} Skill Alignment Score: **{sr.final_score:.1f} / 100**"
-        f"  —  *{jd.job_title}*"
+        f"  -  *{jd.job_title}*"
     )
 
     c1, c2, c3, c4 = st.columns(4)
@@ -370,34 +363,34 @@ def _render_scoring_section(result, show_tfidf: bool, show_raw: bool) -> None:
 
     with col1:
         if sr.matched_skills:
-            with st.expander(f"✅ Matched Skills ({len(sr.matched_skills)})", expanded=True):
+            with st.expander(f"Matched Skills ({len(sr.matched_skills)})", expanded=True):
                 st.markdown(" ".join(f"`{s}`" for s in sr.matched_skills))
         if sr.semantic_matches:
-            with st.expander(f"🔍 Semantic Matches ({len(sr.semantic_matches)})"):
+            with st.expander(f"Semantic Matches ({len(sr.semantic_matches)})"):
                 st.markdown(" ".join(f"`{s}`" for s in sr.semantic_matches))
 
     with col2:
         if sr.missing_skills:
-            with st.expander(f"❌ Missing Skills ({len(sr.missing_skills)})", expanded=True):
+            with st.expander(f"Missing Skills ({len(sr.missing_skills)})", expanded=True):
                 st.markdown(" ".join(f"`{s}`" for s in sr.missing_skills))
         else:
             st.success("All required skills are covered!")
 
-    with st.expander("💡 Explanation & Suggestions", expanded=True):
+    with st.expander("Explanation and Suggestions", expanded=True):
         for line in sr.explanation.split("\n"):
             if line.strip():
                 st.markdown(line)
 
     if show_raw:
-        with st.expander("🔍 Raw JSON — ScoringResult"):
+        with st.expander("Raw JSON - ScoringResult"):
             st.json(sr.model_dump())
 
 
-# ── Section C: Bias Audit ─────────────────────────────────────────────────────
+# --- Section C: Bias Audit ---
 
 def _render_audit_section(result, show_raw: bool) -> None:
     st.markdown("---")
-    st.subheader("⚖️ Bias Audit")
+    st.subheader("Bias Audit")
 
     fr = result.fairness_report
     if fr is None:
@@ -423,14 +416,14 @@ def _render_audit_section(result, show_raw: bool) -> None:
         st.error(f"🚨 {fr.summary}")
 
     if fr.swapped_scores:
-        with st.expander("📊 Per-Name Score Table", expanded=True):
+        with st.expander("Per-Name Score Table", expanded=True):
             original = fr.original_score
             rows = [
                 {
                     "Name": name,
                     "Score": round(score, 2),
                     "Shift (pts)": round(abs(score - original), 2),
-                    "Direction": "▲ Higher" if score > original else ("▼ Lower" if score < original else "= Same"),
+                    "Direction": "Higher" if score > original else ("Lower" if score < original else "Same"),
                 }
                 for name, score in sorted(
                     fr.swapped_scores.items(), key=lambda x: x[1], reverse=True
@@ -440,30 +433,30 @@ def _render_audit_section(result, show_raw: bool) -> None:
             st.dataframe(df, use_container_width=True, hide_index=True)
 
     if show_raw:
-        with st.expander("🔍 Raw JSON — FairnessReport"):
+        with st.expander("Raw JSON - FairnessReport"):
             st.json(fr.model_dump())
 
 
-# ── Landing page ──────────────────────────────────────────────────────────────
+# --- Landing page ---
 
 def _render_landing() -> None:
     st.markdown("### How it works")
     c1, c2, c3 = st.columns(3)
     with c1:
-        st.markdown("**📋 Step 1 — Parse**")
+        st.markdown("**Step 1 - Parse**")
         st.markdown(
             "spaCy NER + keyword matching extracts skills, education, "
             "experience, organisations, and job titles from raw resume text."
         )
     with c2:
-        st.markdown("**🎯 Step 2 — Score**")
+        st.markdown("**Step 2 - Score**")
         st.markdown(
             "MiniLM sentence embeddings compute semantic similarity, "
             "combined with skill coverage and experience match into a "
-            "Skill Alignment Score (0–100)."
+            "Skill Alignment Score (0-100)."
         )
     with c3:
-        st.markdown("**⚖️ Step 3 — Audit**")
+        st.markdown("**Step 3 - Audit**")
         st.markdown(
             "Controlled name-swapping: the same resume is re-scored with "
             "10+ demographically distinct names. Score shifts reveal "
@@ -472,14 +465,14 @@ def _render_landing() -> None:
     st.markdown("---")
     st.caption(
         "Paste text directly, upload a file (PDF / DOCX / TXT), "
-        "or enable **Use Sample Data** in the sidebar, then click **Analyze Resume**."
+        "or enable Use Sample Data in the sidebar, then click Analyze Resume."
     )
 
 
-# ── Main ──────────────────────────────────────────────────────────────────────
+# --- Main ---
 
 def main() -> None:
-    st.title("📄 Resume Intelligence")
+    st.title("Resume Intelligence")
     st.markdown(
         "A Multi-Agent Framework for **Structured** and **Fair** Resume Screening."
     )
@@ -490,10 +483,9 @@ def main() -> None:
 
     st.markdown("")
     analyze = st.button(
-        "🚀 Analyze Resume", type="primary", use_container_width=True
+        "Analyze Resume", type="primary", use_container_width=True
     )
 
-    # Read from session_state — always reflects file-uploaded or typed text
     _resume = st.session_state.get("resume_text", resume_text)
     _jd = st.session_state.get("jd_text", jd_text)
     cache_key = (_resume.strip(), _jd.strip(), options["run_audit"])
@@ -503,15 +495,15 @@ def main() -> None:
         _jd = st.session_state.get("jd_text", jd_text)
 
         if not _resume.strip():
-            st.error("Please provide resume text — paste it, upload a file, or enable Use Sample Data.")
+            st.error("Please provide resume text - paste it, upload a file, or enable Use Sample Data.")
             return
         if not _jd.strip():
-            st.error("Please provide a job description — paste it, upload a file, or enable Use Sample Data.")
+            st.error("Please provide a job description - paste it, upload a file, or enable Use Sample Data.")
             return
 
         if st.session_state.get("_cache_key") != cache_key:
             run_pipeline = _load_pipeline()
-            with st.spinner("Running pipeline… this may take 10–20 s on first run."):
+            with st.spinner("Running pipeline... this may take 10-20 s on first run."):
                 try:
                     result = run_pipeline(
                         resume_text=_resume,
@@ -524,7 +516,7 @@ def main() -> None:
                     st.error(f"Pipeline error: {exc}")
                     return
 
-        st.success("Analysis Complete ✅")
+        st.success("Analysis Complete")
 
     if "_result" in st.session_state:
         result = st.session_state["_result"]

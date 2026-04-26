@@ -29,7 +29,9 @@ coverage.xml
 *.cover
 
 # ── Cached model weights ──────────────────────
-models/
+# Note: 'models/' here means a top-level models/ directory for cached weights.
+# It does NOT apply to src/resume_intelligence/models/ (the Python package).
+/models/
 *.pt
 *.bin
 *.safetensors

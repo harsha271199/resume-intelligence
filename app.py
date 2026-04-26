@@ -18,8 +18,21 @@ import os
 import sys
 from typing import Optional
 
-# Make the src package importable when running from the project root
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
+# ── Robust src path injection ─────────────────────────────────────────────────
+# Works on local dev (any working directory) AND Streamlit Cloud.
+#
+# os.path.abspath(__file__) resolves the real path of app.py regardless of
+# the current working directory, so SRC_PATH is always correct even when
+# Streamlit Cloud runs the app from a different directory.
+#
+# We guard with `if SRC_PATH not in sys.path` to avoid duplicate entries on
+# hot-reloads.
+
+_ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+_SRC_PATH = os.path.join(_ROOT_DIR, "src")
+
+if _SRC_PATH not in sys.path:
+    sys.path.insert(0, _SRC_PATH)
 
 import pandas as pd
 import streamlit as st

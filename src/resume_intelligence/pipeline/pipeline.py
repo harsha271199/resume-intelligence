@@ -17,9 +17,17 @@ Public API
 from __future__ import annotations
 
 import logging
+import os
 import re
+import sys
 import uuid
 from typing import List, Optional
+
+# Ensure the src directory is on sys.path when this module is imported directly
+# (e.g. via CLI or tests) rather than through app.py.
+_SRC_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+if _SRC_DIR not in sys.path:
+    sys.path.insert(0, _SRC_DIR)
 
 from resume_intelligence.agents.bias_auditor import audit_resume
 from resume_intelligence.agents.parser_agent import _extract_skills, normalize_skills, parse_resume

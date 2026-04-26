@@ -1,0 +1,231 @@
+{
+  "per_sample": [
+    {
+      "id": "resume_1",
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 6,
+      "fp": 0,
+      "fn": 0,
+      "predicted": [
+        "docker",
+        "machine learning",
+        "pandas",
+        "python",
+        "scikit-learn",
+        "sql"
+      ],
+      "true": [
+        "docker",
+        "machine learning",
+        "pandas",
+        "python",
+        "scikit-learn",
+        "sql"
+      ]
+    },
+    {
+      "id": "resume_2",
+      "precision": 0.8889,
+      "recall": 1.0,
+      "f1": 0.9412,
+      "tp": 8,
+      "fp": 1,
+      "fn": 0,
+      "predicted": [
+        "amazon web services",
+        "deep learning",
+        "git",
+        "kubernetes",
+        "linux",
+        "machine learning",
+        "natural language processing",
+        "python",
+        "pytorch"
+      ],
+      "true": [
+        "amazon web services",
+        "git",
+        "kubernetes",
+        "linux",
+        "machine learning",
+        "natural language processing",
+        "python",
+        "pytorch"
+      ]
+    },
+    {
+      "id": "resume_3",
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 8,
+      "fp": 0,
+      "fn": 0,
+      "predicted": [
+        "docker",
+        "flask",
+        "git",
+        "java",
+        "postgresql",
+        "python",
+        "redis",
+        "rest api"
+      ],
+      "true": [
+        "docker",
+        "flask",
+        "git",
+        "java",
+        "postgresql",
+        "python",
+        "redis",
+        "rest api"
+      ]
+    },
+    {
+      "id": "resume_4",
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 7,
+      "fp": 0,
+      "fn": 0,
+      "predicted": [
+        "apache airflow",
+        "apache kafka",
+        "apache spark",
+        "google cloud platform",
+        "python",
+        "sql",
+        "terraform"
+      ],
+      "true": [
+        "apache airflow",
+        "apache kafka",
+        "apache spark",
+        "google cloud platform",
+        "python",
+        "sql",
+        "terraform"
+      ]
+    },
+    {
+      "id": "resume_5",
+      "precision": 0.875,
+      "recall": 1.0,
+      "f1": 0.9333,
+      "tp": 7,
+      "fp": 1,
+      "fn": 0,
+      "predicted": [
+        "amazon web services",
+        "ansible",
+        "devops",
+        "docker",
+        "jenkins",
+        "kubernetes",
+        "linux",
+        "terraform"
+      ],
+      "true": [
+        "amazon web services",
+        "ansible",
+        "docker",
+        "jenkins",
+        "kubernetes",
+        "linux",
+        "terraform"
+      ]
+    },
+    {
+      "id": "resume_6",
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 8,
+      "fp": 0,
+      "fn": 0,
+      "predicted": [
+        "docker",
+        "fastapi",
+        "git",
+        "javascript",
+        "node.js",
+        "postgresql",
+        "react",
+        "typescript"
+      ],
+      "true": [
+        "docker",
+        "fastapi",
+        "git",
+        "javascript",
+        "node.js",
+        "postgresql",
+        "react",
+        "typescript"
+      ]
+    },
+    {
+      "id": "resume_7",
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 7,
+      "fp": 0,
+      "fn": 0,
+      "predicted": [
+        "bert",
+        "fastapi",
+        "hugging face",
+        "natural language processing",
+        "python",
+        "pytorch",
+        "scikit-learn"
+      ],
+      "true": [
+        "bert",
+        "fastapi",
+        "hugging face",
+        "natural language processing",
+        "python",
+        "pytorch",
+        "scikit-learn"
+      ]
+    },
+    {
+      "id": "resume_8",
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 7,
+      "fp": 0,
+      "fn": 0,
+      "predicted": [
+        "data visualization",
+        "numpy",
+        "pandas",
+        "python",
+        "sql",
+        "statistics",
+        "tableau"
+      ],
+      "true": [
+        "data visualization",
+        "numpy",
+        "pandas",
+        "python",
+        "sql",
+        "statistics",
+        "tableau"
+      ]
+    }
+  ],
+  "macro": {
+    "precision": 0.9705,
+    "recall": 1.0,
+    "f1": 0.9843
+  }
+}

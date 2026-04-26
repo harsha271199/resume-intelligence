@@ -1,10 +1,34 @@
 {
   "resume_1": {
-    "text": "Python developer with experience in SQL and Docker",
-    "skills": ["python", "sql", "docker"]
+    "text": "Alex Johnson\nData Scientist with 4 years of experience.\nSKILLS: Python, SQL, Docker, machine learning, pandas, scikit-learn\nEXPERIENCE: Data Scientist at Acme Corp (2020-2024)\nEDUCATION: M.S. Computer Science, Stanford University",
+    "skills": ["python", "sql", "docker", "machine learning", "pandas", "scikit-learn"]
   },
   "resume_2": {
-    "text": "Machine learning engineer with AWS and Kubernetes",
-    "skills": ["machine learning", "aws", "kubernetes"]
+    "text": "Maria Chen\nML Engineer specialising in NLP and deep learning.\nSKILLS: Python, PyTorch, machine learning, NLP, AWS, Kubernetes, Git, Linux\nEXPERIENCE: ML Engineer at TechCorp (2021-2024)\nEDUCATION: M.S. Electrical Engineering, MIT",
+    "skills": ["python", "pytorch", "machine learning", "natural language processing", "amazon web services", "kubernetes", "git", "linux"]
+  },
+  "resume_3": {
+    "text": "James Lee\nBackend Software Engineer with 5 years of experience.\nSKILLS: Python, Java, Docker, PostgreSQL, Redis, Flask, Git, REST API\nEXPERIENCE: Software Engineer at StartupXYZ (2019-2024)\nEDUCATION: B.S. Computer Science, UC Berkeley",
+    "skills": ["python", "java", "docker", "postgresql", "redis", "flask", "git", "rest api"]
+  },
+  "resume_4": {
+    "text": "Priya Sharma\nData Engineer building large-scale pipelines.\nSKILLS: Python, SQL, Apache Spark, Kafka, Airflow, GCP, Terraform\nEXPERIENCE: Data Engineer at DataFlow Inc (2020-2024)\nEDUCATION: B.Tech Computer Science, IIT Delhi",
+    "skills": ["python", "sql", "apache spark", "apache kafka", "apache airflow", "google cloud platform", "terraform"]
+  },
+  "resume_5": {
+    "text": "Carlos Mendoza\nDevOps Engineer managing cloud infrastructure.\nSKILLS: AWS, Kubernetes, Docker, Terraform, Jenkins, Linux, Ansible\nEXPERIENCE: DevOps Engineer at CloudOps (2018-2024)\nEDUCATION: B.S. Information Systems, UT Austin",
+    "skills": ["amazon web services", "kubernetes", "docker", "terraform", "jenkins", "linux", "ansible"]
+  },
+  "resume_6": {
+    "text": "Wei Zhang\nFull-Stack Developer building modern web applications.\nSKILLS: JavaScript, TypeScript, React, Node.js, FastAPI, Docker, PostgreSQL, Git\nEXPERIENCE: Full-Stack Developer at WebAgency (2020-2024)\nEDUCATION: B.S. Software Engineering, Georgia Tech",
+    "skills": ["javascript", "typescript", "react", "node.js", "fastapi", "docker", "postgresql", "git"]
+  },
+  "resume_7": {
+    "text": "Aisha Patel\nNLP Research Engineer with transformer expertise.\nSKILLS: Python, PyTorch, NLP, BERT, Hugging Face, scikit-learn, FastAPI\nEXPERIENCE: NLP Engineer at AILabs (2021-2024)\nEDUCATION: Ph.D. Computer Science, Carnegie Mellon",
+    "skills": ["python", "pytorch", "natural language processing", "bert", "hugging face", "scikit-learn", "fastapi"]
+  },
+  "resume_8": {
+    "text": "David Kim\nData Analyst with strong SQL and visualisation skills.\nSKILLS: SQL, Python, Tableau, pandas, NumPy, statistics, data visualization\nEXPERIENCE: Data Analyst at RetailCo (2021-2024)\nEDUCATION: B.S. Statistics, University of Michigan",
+    "skills": ["sql", "python", "tableau", "pandas", "numpy", "statistics", "data visualization"]
   }
 }

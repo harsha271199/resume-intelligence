@@ -1,0 +1,29 @@
+[
+  {
+    "model": "TF-IDF + Logistic Regression",
+    "accuracy": 0.4,
+    "precision": 0.4444,
+    "recall": 0.8,
+    "f1": 0.5714,
+    "cv_f1_mean": 0.5091,
+    "cv_f1_std": 0.2588
+  },
+  {
+    "model": "TF-IDF + Random Forest",
+    "accuracy": 0.6,
+    "precision": 0.6,
+    "recall": 0.6,
+    "f1": 0.6,
+    "cv_f1_mean": 0.7568,
+    "cv_f1_std": 0.1199
+  },
+  {
+    "model": "Embeddings + Logistic Regression",
+    "accuracy": 0.6,
+    "precision": 0.5714,
+    "recall": 0.8,
+    "f1": 0.6667,
+    "cv_f1_mean": 0.6043,
+    "cv_f1_std": 0.1207
+  }
+]

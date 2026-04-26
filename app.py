@@ -1,5 +1,4 @@
-"""
-app.py - Resume Intelligence Streamlit Application
+"""app.py - Resume Intelligence Streamlit Application
 
 Run with:
     streamlit run app.py
@@ -45,6 +44,26 @@ st.set_page_config(
 def _load_pipeline():
     from resume_intelligence.pipeline.pipeline import run_pipeline
     return run_pipeline
+
+
+# --- Experimental ML model loader ---
+
+def _load_ml_model():
+    """
+    Load the pretrained Random Forest model from experiments/training/saved_models/.
+    Returns the saved dict {"vectorizer": ..., "classifier": ...} or None if missing.
+    Errors are caught silently so the app never crashes on a missing file.
+    """
+    import pickle
+    model_path = os.path.join(_ROOT_DIR, "experiments", "training",
+                              "saved_models", "tfidf_rf.pkl")
+    try:
+        with open(model_path, "rb") as f:
+            return pickle.load(f)
+    except FileNotFoundError:
+        return None
+    except Exception:
+        return None
 
 
 # --- Sample data ---
@@ -159,6 +178,12 @@ def _render_sidebar() -> dict:
         value=False,
         help="Expand full parsed output as JSON for debugging",
     )
+    use_ml = st.sidebar.checkbox(
+        "🔬 Use Experimental ML Model (Random Forest)",
+        value=False,
+        help="Replace the neural pipeline with a trained TF-IDF + Random Forest classifier. "
+             "OFF = default production pipeline (recommended).",
+    )
 
     st.sidebar.markdown("---")
     st.sidebar.subheader("About")
@@ -176,6 +201,7 @@ def _render_sidebar() -> dict:
         "run_audit": run_audit,
         "show_tfidf": show_tfidf,
         "show_raw_json": show_raw_json,
+        "use_ml": use_ml,
     }
 
 
@@ -342,10 +368,9 @@ def _render_scoring_section(result, show_tfidf: bool, show_raw: bool) -> None:
         return
 
     badge = _score_badge(sr.final_score)
-    st.markdown(
-        f"### {badge} Skill Alignment Score: **{sr.final_score:.1f} / 100**"
-        f"  -  *{jd.job_title}*"
-    )
+    st.markdown(f"### {badge} Skill Alignment Score: **{sr.final_score:.1f} / 100**")
+    if jd.job_title and jd.job_title != "this role":
+        st.caption(f"Role: {jd.job_title}")
 
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("Semantic Similarity", f"{sr.semantic_similarity:.1f}")
@@ -371,8 +396,30 @@ def _render_scoring_section(result, show_tfidf: bool, show_raw: bool) -> None:
 
     with col2:
         if sr.missing_skills:
-            with st.expander(f"Missing Skills ({len(sr.missing_skills)})", expanded=True):
-                st.markdown(" ".join(f"`{s}`" for s in sr.missing_skills))
+            from resume_intelligence.agents.scoring_agent import _classify_missing_skills
+            _labels = _classify_missing_skills(sr.missing_skills, jd.raw_text)
+            _required = sorted(s for s in sr.missing_skills if _labels.get(s) == "required")
+            _preferred = sorted(s for s in sr.missing_skills if _labels.get(s) == "preferred")
+            _other = sorted(s for s in sr.missing_skills if _labels.get(s) not in ("required", "preferred"))
+
+            with st.expander(f"Missing ATS Keywords ({len(sr.missing_skills)})", expanded=True):
+                if _required or _preferred:
+                    st.info(
+                        f"You are missing {len(_required)} required and {len(_preferred)} preferred "
+                        "skill(s). Focus on required skills first."
+                    )
+                if _required:
+                    st.markdown("🔴 **Required ATS Keywords**")
+                    for s in _required:
+                        st.markdown(f"- `{s}` *(required by JD)*")
+                if _preferred:
+                    st.markdown("🟡 **Preferred ATS Keywords**")
+                    for s in _preferred:
+                        st.markdown(f"- `{s}` *(preferred)*")
+                if _other:
+                    st.markdown("⚪ **Other Keywords**")
+                    for s in _other:
+                        st.markdown(f"- `{s}`")
         else:
             st.success("All required skills are covered!")
 
@@ -488,11 +535,24 @@ def main() -> None:
 
     _resume = st.session_state.get("resume_text", resume_text)
     _jd = st.session_state.get("jd_text", jd_text)
+
+    import re
+
+    # Drop any line that contains a salary range (numbers with currency/range markers)
+    # This handles mid-sentence salary text like "Base salary is 180,000–300,000 (USD), which..."
+    _salary_line_re = re.compile(
+        r".*\$?\d{1,3}(?:,\d{3})+.*(?:USD|CAD|GBP|EUR|per\s+year|per\s+annum|annually|salary|compensation).*",
+        re.IGNORECASE,
+    )
+    _jd = "\n".join(
+        line for line in _jd.splitlines()
+        if not _salary_line_re.match(line.strip())
+    )
     cache_key = (_resume.strip(), _jd.strip(), options["run_audit"])
 
     if analyze:
         _resume = st.session_state.get("resume_text", resume_text)
-        _jd = st.session_state.get("jd_text", jd_text)
+
 
         if not _resume.strip():
             st.error("Please provide resume text - paste it, upload a file, or enable Use Sample Data.")
@@ -501,8 +561,58 @@ def main() -> None:
             st.error("Please provide a job description - paste it, upload a file, or enable Use Sample Data.")
             return
 
+        # ── Experimental ML mode ──────────────────────────────────────────────
+        if options["use_ml"]:
+            saved = _load_ml_model()
+            if saved is None:
+                st.error(
+                    "Trained model not found. "
+                    "Run `python experiments/training/train_model.py` first, "
+                    "then redeploy or restart the app."
+                )
+                return
+
+            try:
+                import re as _re
+
+                def _preprocess(text: str) -> str:
+                    text = text.lower()
+                    text = _re.sub(r"[^a-z\s]", " ", text)
+                    return _re.sub(r"\s+", " ", text).strip()
+
+                combined = _preprocess(_resume + " " + _jd)
+                vec = saved["vectorizer"]
+                clf = saved["classifier"]
+                X = vec.transform([combined])
+                prediction = int(clf.predict(X)[0])
+
+                score = 90 if prediction == 1 else 30
+                label = "Good Match" if prediction == 1 else "Weak Match"
+                badge = "🟢" if prediction == 1 else "🔴"
+
+                st.success("Experimental ML Analysis Complete")
+                st.markdown("---")
+                st.subheader("🔬 Experimental ML Model — Random Forest")
+                st.caption("Using TF-IDF + Random Forest classifier trained on the experiments dataset.")
+
+                col1, col2 = st.columns(2)
+                col1.metric("ML Match Score", f"{score} / 100")
+                col2.metric("Prediction", f"{badge} {label}")
+
+                st.info(
+                    f"The Random Forest model predicts this resume is a **{label}** "
+                    f"for the given job description (score: {score}/100). "
+                    "This is a binary classification result based on TF-IDF features. "
+                    "For detailed skill analysis, disable the experimental toggle."
+                )
+            except Exception as exc:
+                st.error(f"ML model error: {exc}")
+            return  # do not run the default pipeline in ML mode
+
+        # ── Default production pipeline ───────────────────────────────────────
         if st.session_state.get("_cache_key") != cache_key:
             run_pipeline = _load_pipeline()
+
             with st.spinner("Running pipeline... this may take 10-20 s on first run."):
                 try:
                     result = run_pipeline(

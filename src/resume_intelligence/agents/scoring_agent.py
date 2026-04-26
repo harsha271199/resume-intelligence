@@ -67,6 +67,46 @@ _JD_YEARS_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
+# ── ATS keyword importance classifier ────────────────────────────────────────
+
+_PREFERRED_CTX = re.compile(
+    r"(?:preferred|nice.to.have|bonus|plus|ideally|desirable|advantageous|familiarity)",
+    re.IGNORECASE,
+)
+_REQUIRED_CTX = re.compile(
+    r"(?:required|must.have|essential|mandatory|necessary|minimum|critical|need)",
+    re.IGNORECASE,
+)
+
+
+def _classify_missing_skills(
+    missing_skills: List[str],
+    jd_raw_text: str,
+) -> dict:
+    """
+    For each missing skill, scan the JD sentences that mention it and classify
+    as 'required', 'preferred', or 'unknown'.
+
+    Returns a dict: {skill: 'required' | 'preferred' | 'unknown'}
+    """
+    sentences = re.split(r"[.\n;]", jd_raw_text)
+    classification: dict = {}
+
+    for skill in missing_skills:
+        skill_lower = skill.lower()
+        label = "unknown"
+        for sent in sentences:
+            if skill_lower in sent.lower():
+                if _REQUIRED_CTX.search(sent):
+                    label = "required"
+                    break
+                elif _PREFERRED_CTX.search(sent):
+                    label = "preferred"
+                    # don't break — a later sentence might say required
+        classification[skill] = label
+
+    return classification
+
 
 # ── Component helpers ─────────────────────────────────────────────────────────
 
@@ -222,6 +262,7 @@ def _build_explanation(
     semantic_similarity: float,
     skill_coverage: float,
     experience_match: float,
+    missing_skill_labels: Optional[dict] = None,
 ) -> str:
     """
     Build a concise, human-readable explanation of the score.
@@ -231,14 +272,14 @@ def _build_explanation(
 
     # Overall verdict
     if final_score >= 75:
-        verdict = "strong match"
+        verdict = "strong"
     elif final_score >= 50:
-        verdict = "moderate match"
+        verdict = "moderate"
     else:
-        verdict = "weak match"
+        verdict = "weak"
 
     lines.append(
-        f"{name} is a {verdict} for the {jd.job_title} role "
+        f"Your profile is a {verdict} match for this role "
         f"(Skill Alignment Score: {final_score:.1f}/100)."
     )
 
@@ -259,18 +300,47 @@ def _build_explanation(
             + ", ".join(semantic_matches[:5]) + "."
         )
 
-    # Missing skills with suggestions
+    # Missing skills with ATS importance labels
     if missing_skills:
+        labels = missing_skill_labels or {}
+        required = [s for s in missing_skills if labels.get(s) == "required"]
+        preferred = [s for s in missing_skills if labels.get(s) == "preferred"]
+        unknown = [s for s in missing_skills if labels.get(s) not in ("required", "preferred")]
+
         top_missing = missing_skills[:5]
+        # Build label-annotated list
+        annotated = []
+        for s in top_missing:
+            lbl = labels.get(s, "unknown")
+            if lbl == "required":
+                annotated.append(f"{s} ⚠️")
+            elif lbl == "preferred":
+                annotated.append(f"{s} 💡")
+            else:
+                annotated.append(s)
+
         lines.append(
-            f"❌ Missing skills ({len(missing_skills)}): "
-            + ", ".join(top_missing)
+            f"❌ Missing ATS keywords ({len(missing_skills)}): "
+            + ", ".join(annotated)
             + ("..." if len(missing_skills) > 5 else ".")
         )
-        for skill in top_missing[:3]:
+
+        if required:
             lines.append(
-                f"   💡 Consider adding '{skill}' to strengthen your profile "
-                f"for {jd.job_title} roles."
+                f"   🔴 Required (must-have): " + ", ".join(required[:5])
+                + ("..." if len(required) > 5 else ".")
+            )
+        if preferred:
+            lines.append(
+                f"   🟡 Preferred (nice-to-have): " + ", ".join(preferred[:5])
+                + ("..." if len(preferred) > 5 else ".")
+            )
+
+        for skill in top_missing[:3]:
+            lbl = labels.get(skill, "unknown")
+            priority = " (required by JD)" if lbl == "required" else (" (preferred)" if lbl == "preferred" else "")
+            lines.append(
+                f"   💡 Consider adding '{skill}'{priority} to strengthen your profile."
             )
 
     # Component breakdown
@@ -344,6 +414,9 @@ def score_resume(
         # ── Semantic matches (soft skill matching) ────────────────────────────
         semantic_matches = _find_semantic_matches(missing, resume.raw_text)
 
+        # ── ATS keyword importance classification ─────────────────────────────
+        missing_labels = _classify_missing_skills(missing, job.raw_text)
+
         # ── Final weighted score ──────────────────────────────────────────────
         raw_score = (
             _W1 * sem_sim
@@ -369,6 +442,7 @@ def score_resume(
             semantic_similarity=sem_sim,
             skill_coverage=coverage,
             experience_match=exp_match,
+            missing_skill_labels=missing_labels,
         )
 
         return ScoringResult(

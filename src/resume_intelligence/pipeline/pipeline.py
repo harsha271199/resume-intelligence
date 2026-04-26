@@ -54,6 +54,81 @@ _TITLE_HINTS = re.compile(
     re.IGNORECASE,
 )
 
+# ── Salary line pattern (drop entire lines containing salary info) ────────────
+_SALARY_LINE_RE = re.compile(
+    r"\$?\d{1,3}(?:,\d{3})+.*(?:USD|CAD|GBP|EUR|per\s+year|per\s+annum|annually|salary|compensation)",
+    re.IGNORECASE,
+)
+
+# ── Intelligent job title extractor ──────────────────────────────────────────
+
+def extract_job_title(job_text: str) -> str:
+    """
+    Score candidate lines from the job description and return the most
+    likely job title. Falls back to "this role" if nothing scores > 0.
+    """
+    # Keywords that disqualify a line from being a title
+    _BAD_KEYWORDS = {
+        "career", "about", "team", "company", "what you'll do",
+        "what's required", "benefits", "salary", "usd", "compensation",
+        "we are", "our ", "join us", "opportunity",
+        "years of experience", "year of experience", "experience building",
+        "experience with", "experience in", "responsible for",
+        "you will", "you'll", "required", "preferred", "must have",
+        "looking for", "seeking", "we need", "candidate",
+    }
+    # Scoring tables
+    _HIGH = ["engineer", "scientist", "developer", "architect", "analyst"]
+    _MED  = ["machine learning", "ai", "data", "infrastructure", "cloud"]
+    _LOW  = ["platform", "system"]
+
+    lines = [l.strip() for l in job_text.split("\n") if l.strip()]
+
+    scored: list = []
+    for line in lines:
+        lower = line.lower()
+
+        # Drop salary lines entirely
+        if _SALARY_LINE_RE.search(line):
+            continue
+
+        # Drop lines with disqualifying keywords
+        if any(kw in lower for kw in _BAD_KEYWORDS):
+            continue
+
+        score = 0
+        for kw in _HIGH:
+            if kw in lower:
+                score += 3
+        for kw in _MED:
+            if kw in lower:
+                score += 2
+        for kw in _LOW:
+            if kw in lower:
+                score += 1
+
+        # Penalties
+        if len(line) > 100:
+            score -= 3
+        if "," in line or any(w in lower for w in ["we ", "our ", "company"]):
+            score -= 3
+        # Penalise lines that start with a digit or bullet (requirement lines)
+        if re.match(r"^[\d\-\–\—\•\*]", line):
+            score -= 3
+
+        if score > 0:
+            scored.append((line, score))
+
+    if scored:
+        best = max(scored, key=lambda x: x[1])
+        return best[0][:80]
+
+    # Fallback: first short non-empty line that isn't a salary line
+    for line in lines:
+        if not _SALARY_LINE_RE.search(line) and len(line) <= 80:
+            return line
+    return "this role"
+
 
 # ── JD builder ────────────────────────────────────────────────────────────────
 
@@ -83,17 +158,12 @@ def build_job_description(
     jid = job_id or str(uuid.uuid4())
 
     # ── Job title ─────────────────────────────────────────────────────────────
-    job_title = "Unknown Role"
+    # Try explicit "title: …" hint first, then fall back to scored extraction
     title_match = _TITLE_HINTS.search(job_text)
     if title_match:
-        job_title = title_match.group(1).strip().rstrip(".,;")
+        job_title = title_match.group(1).strip().rstrip(".,;")[:80]
     else:
-        # Fall back to first non-empty line
-        for line in job_text.splitlines():
-            line = line.strip()
-            if line and len(line) < 80:
-                job_title = line
-                break
+        job_title = extract_job_title(job_text)
 
     # ── Skills ────────────────────────────────────────────────────────────────
     raw_skills = _extract_skills(job_text)
